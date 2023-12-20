@@ -4,11 +4,12 @@ import express from "express";
 import http from "http";
 import morgan from "morgan";
 import { env } from "process";
-import { errorHandler } from "./common/middlewares/error.handler.js";
-import { AccessLogStream, Logger } from "./common/utils/logger.js";
-import { APP_CONFIG } from "./infrastructure/configs/index.js";
-import { NotFoundException } from "./common/exceptions/not-found.exception.js";
-import { rootRouter } from "./routes/index.js";
+import { NotFoundException } from "./common/exceptions";
+import { errorHandler } from "./common/middlewares";
+import { AccessLogStream, Logger } from "./common/utils/loggers";
+import { APP_CONFIG } from "./infrastructure/configs";
+import { sequelize } from "./infrastructure/database";
+import { rootRouter } from "./routes";
 
 env.TZ = "Asia/Ho_Chi_Minh";
 
@@ -19,8 +20,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
     cors({
-        origin: ["*"],
-        credentials: false,
+        origin: APP_CONFIG.origin,
+        credentials: APP_CONFIG.credential,
         allowedHeaders: "X-Requested-With, X-HTTP-Method-Override, X-Request-Id, Content-Type, Authorization, Accept",
         methods: "GET, POST, PUT, PATCH, DELETE",
     }),
@@ -42,6 +43,18 @@ const PORT = APP_CONFIG.appPort;
 
 const httpServer = http.createServer(app);
 
-httpServer.listen(PORT, () => {
-    Logger.info(`Server is listening on port:${PORT}`);
-});
+async function bootstrap() {
+    try {
+        await sequelize.authenticate();
+
+        Logger.info("Database connection has been established successfully.");
+
+        httpServer.listen(PORT, () => {
+            Logger.info(`Server is listening on port:${PORT}`);
+        });
+    } catch (error) {
+        Logger.error("Unable to connect to the database", error);
+    }
+}
+
+bootstrap();

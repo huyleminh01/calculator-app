@@ -1,5 +1,4 @@
-import { BaseException } from "../exceptions/base.exception.js";
-import { Logger } from "../utils/logger.js";
+import { Logger } from "../utils/loggers/logger.js";
 
 /**
  *

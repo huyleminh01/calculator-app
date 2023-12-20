@@ -1,6 +1,6 @@
 import statuses from "statuses";
-import { HTTP_CODE } from "../constants/response-code.const.js";
-import { BaseException } from "./base.exception.js";
+import { HTTP_CODE } from "../constants/response-code.const";
+import { BaseException } from "./base.exception";
 
 export class UnauthorizedException extends BaseException {
     constructor(message = statuses(HTTP_CODE.unauthorized), code = HTTP_CODE.unauthorized) {

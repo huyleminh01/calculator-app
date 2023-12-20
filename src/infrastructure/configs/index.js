@@ -11,5 +11,9 @@ export const APP_CONFIG = {
 };
 
 export const DB_CONFIG = {
-    connectionString: process.env.DB_URL || ""
-}
+    host: process.env.DB_HOST || "",
+    port: process.env.DB_PORT ? +process.env.DB_PORT : 0,
+    username: process.env.DB_USERNAME || "",
+    password: process.env.DB_PASSWORD || "",
+    name: process.env.DB_NAME || "",
+};

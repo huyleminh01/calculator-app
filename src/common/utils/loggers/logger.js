@@ -1,9 +1,8 @@
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 import * as winston from "winston";
 import "winston-daily-rotate-file";
-import { APP_CONFIG } from "../../infrastructure/configs/index.js";
+import { APP_CONFIG } from "../../../infrastructure/configs";
 
 /**
  * @description Example:   Logger.debug ("debug", "error", ["debug 3"], {key: "value"}, "and many parameters")
@@ -23,7 +22,7 @@ const format = winston.format.combine(winston.format.timestamp(), winston.format
 const logTransports = [];
 
 if (APP_CONFIG.logDriver.includes("file")) {
-    const logDirectory = path.join(fileURLToPath(new URL(".", import.meta.url)), "../../../logs");
+    const logDirectory = path.join(__dirname, "../../../logs");
     fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
 
     const FileTransport = new winston.transports.DailyRotateFile({
@@ -47,13 +46,3 @@ export const Logger = winston.createLogger({
     format,
     level: APP_CONFIG.logLevel,
 });
-
-// create a rotating write stream
-export class AccessLogStream {
-    write(message) {
-        Logger.info(message);
-        Logger.info("-------------------------------------------");
-        Logger.info("|              Request Ended              |");
-        Logger.info("-------------------------------------------");
-    }
-}

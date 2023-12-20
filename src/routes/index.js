@@ -1,5 +1,5 @@
 import express from "express";
-import { ResponseBuilder } from "../common/utils/builders/response.builder.js";
+import { ResponseBuilder } from "../common/utils/builders/response.builder";
 
 export const rootRouter = express.Router();
 

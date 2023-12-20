@@ -1,6 +1,6 @@
 import statuses from "statuses";
-import { HTTP_CODE } from "../constants/response-code.const.js";
-import { BaseException } from "./base.exception.js";
+import { HTTP_CODE } from "../constants/response-code.const";
+import { BaseException } from "./base.exception";
 
 export class NotFoundException extends BaseException {
     constructor(message = statuses(HTTP_CODE.notFound), code = HTTP_CODE.notFound) {
