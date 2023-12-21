@@ -29,6 +29,14 @@ export function errorHandler(error, request, response, next) {
 
             outMessage = error.errors && error.toString();
             break;
+        case "ExpressionException":
+            status = 400;
+            responseError.code = status;
+            responseError.message = error.message;
+            responseError.data = error.details;
+
+            outMessage = error.toString();
+            break;
         default:
             outMessage = error;
             break;

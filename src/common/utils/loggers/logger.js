@@ -22,7 +22,7 @@ const format = winston.format.combine(winston.format.timestamp(), winston.format
 const logTransports = [];
 
 if (APP_CONFIG.logDriver.includes("file")) {
-    const logDirectory = path.join(__dirname, "../../../logs");
+    const logDirectory = path.join(__dirname, "../../../../logs");
     fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
 
     const FileTransport = new winston.transports.DailyRotateFile({
