@@ -11,7 +11,23 @@ const formatFunction = winston.format.printf(({ level, timestamp, ms, message, .
     const timestampString = new Date(timestamp).toLocaleString();
 
     const args = rest[Symbol.for("splat")] || [];
-    const outMessage = [message, ...args].map(JSON.stringify).join(" ");
+    const outMessage = [message, ...args]
+        .map((item) => {
+            switch (typeof item) {
+                case "string":
+                    return item;
+                case "number":
+                case "boolean":
+                    return item.toString();
+                case "object":
+                    return JSON.stringify(item);
+                case "undefined":
+                case "function":
+                default:
+                    return "";
+            }
+        })
+        .join(" ");
 
     return `[${timestampString}] : [${level}] : ${outMessage} ${ms}`;
 });

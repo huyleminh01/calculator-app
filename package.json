@@ -9,7 +9,8 @@
     "start": "npm run build && node dist/main.js",
     "start:dev": "nodemon --exec babel-node src/main.js",
     "build": "babel src -d dist",
-    "db:migrate": "npm run build && sequelize db:migrate"
+    "db:migrate": "npm run build && sequelize db:migrate",
+    "db:seed": "npm run build && sequelize db:seed:all"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",

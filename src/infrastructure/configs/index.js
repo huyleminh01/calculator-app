@@ -17,3 +17,8 @@ export const DB_CONFIG = {
     password: process.env.DB_PASSWORD || "",
     name: process.env.DB_NAME || "",
 };
+
+export const TOKEN_CONFIG = {
+    secret: process.env.TOKEN_SECRET || "",
+    expiresTime: process.env.TOKEN_EXP ? +process.env.TOKEN_EXP : 0,
+};

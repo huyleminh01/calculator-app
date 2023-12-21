@@ -7,4 +7,5 @@ rootRouter.get("/", (req, res) => {
     res.json(new ResponseBuilder().withData({ name: "Calculator API", version: "v1" }).build());
 });
 
+export * from "./auth.route";
 export * from "./expression.route";
