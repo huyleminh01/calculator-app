@@ -21,4 +21,5 @@ export const DB_CONFIG = {
 export const TOKEN_CONFIG = {
     secret: process.env.TOKEN_SECRET || "",
     expiresTime: process.env.TOKEN_EXP ? +process.env.TOKEN_EXP : 0,
+    tokenScheme: process.env.TOKEN_SCHEME || "",
 };

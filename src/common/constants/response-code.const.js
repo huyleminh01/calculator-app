@@ -9,13 +9,3 @@ export const HTTP_CODE = {
     internalServerError: 500,
     badGateway: 502,
 };
-
-export const RESPONSE_CODE = {
-    // 400: BAD REQUEST
-    validationError: 4001,
-
-    // 401: UNAUTHORIZED
-    missingToken: 4011,
-
-    // 403: FORBIDDEN
-};

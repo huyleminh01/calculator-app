@@ -26,7 +26,7 @@ export class Expression {
      * @returns string
      */
     toString() {
-        return this.#tokenArray.join(" ");
+        return this.#tokenArray.map((item) => item.value).join(" ");
     }
 
     /**

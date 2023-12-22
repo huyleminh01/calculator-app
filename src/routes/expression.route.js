@@ -1,7 +1,31 @@
 import express from "express";
-import { asyncRouteHandler } from "../common/middlewares";
-import { calculateExpression } from "../controllers";
+import {
+    asyncRouteHandler,
+    optionalTokenAuthMiddleware,
+    tokenAuthMiddleware,
+    verifyUserAccessMiddleware,
+} from "../common/middlewares";
+import { calculateExpression, clearExpressionHistory, viewExpressionHistory } from "../controllers";
 
 export const expressionRouter = express.Router();
 
-expressionRouter.post("/calculation", asyncRouteHandler(calculateExpression));
+expressionRouter.post(
+    "/calculation",
+    optionalTokenAuthMiddleware,
+    verifyUserAccessMiddleware,
+    asyncRouteHandler(calculateExpression),
+);
+
+expressionRouter.get(
+    "/history",
+    tokenAuthMiddleware,
+    verifyUserAccessMiddleware,
+    asyncRouteHandler(viewExpressionHistory),
+);
+
+expressionRouter.delete(
+    "/history/all",
+    tokenAuthMiddleware,
+    verifyUserAccessMiddleware,
+    asyncRouteHandler(clearExpressionHistory),
+);
