@@ -10,6 +10,7 @@ import { AccessLogStream, Logger } from "./common/utils/loggers";
 import { APP_CONFIG } from "./infrastructure/configs";
 import { sequelize } from "./infrastructure/database";
 import { authRouter, expressionRouter, rootRouter } from "./routes";
+import { apiDocRouter } from "./routes/api-doc.route";
 
 env.TZ = "Asia/Ho_Chi_Minh";
 
@@ -32,6 +33,7 @@ app.use(morgan("combined", { stream: new AccessLogStream() }));
 // handle API route here
 app.use("/v1/expressions", expressionRouter);
 app.use("/v1/auth", authRouter);
+app.use("/api-doc", apiDocRouter);
 app.use(rootRouter);
 
 app.use(function (req, res, next) {
@@ -47,7 +49,7 @@ const httpServer = http.createServer(app);
 
 async function bootstrap() {
     try {
-        await sequelize.authenticate();
+        // await sequelize.authenticate();
 
         Logger.info("Database connection has been established successfully.");
 

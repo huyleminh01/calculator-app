@@ -1,4 +1,4 @@
-export const HTTP_CODE = {
+export const HTTP_CODE = Object.freeze({
     ok: 200,
     badRequest: 400,
     created: 201,
@@ -8,4 +8,4 @@ export const HTTP_CODE = {
     notFound: 404,
     internalServerError: 500,
     badGateway: 502,
-};
+});

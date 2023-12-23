@@ -1,0 +1,310 @@
+openapi: 3.0.3
+info:
+  title: Calculator API
+  contact:
+    name: API Support
+    email: huy.lm@holistics.io
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: ''
+
+tags:
+  - name: HealthCheck
+  - name: Auth
+  - name: Expression
+
+paths:
+  /:
+    get:
+      tags:
+        - HealthCheck
+      description: Find out basic information of the service
+      operationId: baseHealthCheck
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: 'OK'
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      version:
+                        type: string
+                        example: 'v1'
+
+  /v1/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login by username/password
+      operationId: baseLogin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BaseLoginBody'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+              examples:
+                ok:
+                  summary: Login Ok
+                  value:
+                    code: 200
+                    message: OK
+                    data:
+                      token:
+                        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI3MjU2YjgzNS1iYjAxLTQ2N2QtODQ4ZC01MmFlMzkxYzU4MGMiLCJpYXQiOjE3MDMyNjU2NTYsImV4cCI6MTcwMzM1MjA1Nn0.HjslACnBQOA6Mh2YBb_queefDcbiuthju6YQ44cvhZc'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+              examples:
+                bad_request:
+                  summary: Login Failed
+                  value:
+                    code: 400
+                    message: Invalid username format
+
+  /v1/expressions/calculation:
+    post:
+      tags:
+        - Expression
+      description: Calculate an expresison
+      operationId: calculateExpression
+      security:
+        - AccessToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                expression:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      result:
+                        type: string
+                      expression:
+                        type: string
+              examples:
+                ok:
+                  summary: Ok
+                  value:
+                    code: 200
+                    message: OK
+                    data:
+                      expression: '1+2'
+                      result: '3'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      result:
+                        type: string
+                      expression:
+                        type: string
+              examples:
+                bad_request:
+                  summary: Failed
+                  value:
+                    code: 400
+                    message: Syntax error
+                    data: Empty expression
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+              examples:
+                unauthorized:
+                  summary: Failed
+                  value:
+                    code: 401
+                    message: Invalid access token
+
+  /v1/expressions/history:
+    get:
+      tags:
+        - Expression
+      summary: Get expression history
+      operationId: getExpressionHistory
+      security:
+        - AccessToken: []
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: The number of records in single page
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            identifier:
+                              type: string
+                            result:
+                              type: string
+                            expression:
+                              type: string
+                            createdAt:
+                              type: string
+                      pagination:
+                        type: object
+                        properties:
+                          page:
+                            type: integer
+                          limit:
+                            type: integer
+                          total:
+                            type: integer
+              examples:
+                ok:
+                  summary: OK
+                  value:
+                    code: 200
+                    message: OK
+                    data:
+                      items:
+                        - identifier: "a635d1bf-c95f-40af-b6dd-148ff54bfe04"
+                          result: "10003793082447333112"
+                          expression: "10000000000000000000+2*1896541223666556"
+                          createdAt: "2023-12-22T16:16:22.187Z"
+                      pagination:
+                        page: 1
+                        limit: 1
+                        total: 1
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+              examples:
+                unauthorized:
+                  summary: Failed
+                  value:
+                    code: 401
+                    message: Invalid access token
+
+  /v1/expressions/history/all:
+    delete:
+      tags:
+        - Expression
+      summary: Clear history of a user
+      operationId: clearExpressionHistory
+      security:
+        - AccessToken: []
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+              examples:
+                unauthorized:
+                  summary: Failed
+                  value:
+                    code: 401
+                    message: Invalid access token
+components:
+  schemas:
+    BaseResponse:
+      type: object
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+
+    BaseLoginBody:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+      required: [username, password]
+
+  securitySchemes:
+    AccessToken:
+      type: http
+      scheme: Bearer
