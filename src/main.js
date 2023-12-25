@@ -49,7 +49,7 @@ const httpServer = http.createServer(app);
 
 async function bootstrap() {
     try {
-        // await sequelize.authenticate();
+        await sequelize.authenticate();
 
         Logger.info("Database connection has been established successfully.");
 
