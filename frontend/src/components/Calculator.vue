@@ -1,6 +1,6 @@
 <script setup>
-import CalculatorButton from './CalculatorButton.vue';
-import HistoryItem from './HistoryItem.vue';
+import CalculatorButton from "./CalculatorButton.vue";
+import HistoryItem from "./HistoryItem.vue";
 </script>
 
 <script>
@@ -199,7 +199,8 @@ export default {
                         <HistoryItem :expression="''" :result="''" @on-click=""></HistoryItem>
                     </div>
 
-                    <button class="px-4 py-2 bg-[#E5EAED] hover:bg-[#d7dcdf] font-semibold rounded-lg" @click="handleClearHistory">Clear history</button>
+                    <button class="px-4 py-2 bg-[#E5EAED] hover:bg-[#d7dcdf] font-semibold rounded-lg"
+                        @click="handleClearHistory">Clear history</button>
                 </div>
             </div>
         </template>
