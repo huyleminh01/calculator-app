@@ -1,5 +1,6 @@
 <script setup>
 import CalculatorButton from './CalculatorButton.vue';
+import HistoryItem from './HistoryItem.vue';
 </script>
 
 <script>
@@ -24,12 +25,14 @@ const buttonList = [
 export default {
     components: {
         CalculatorButton,
+        HistoryItem,
     },
     data() {
         return {
             expression: "",
             calculatedExpression: "",
             result: "",
+            showHistory: false,
         }
     },
     computed: {
@@ -125,18 +128,21 @@ export default {
             this.expression = "";
         },
 
-        handleKeyUp(event) {
-            console.log(event.target)
+        closeHistoryModal() {
+            this.showHistory = false;
+        },
+        showHistoryModal() {
+            this.showHistory = true;
         }
     }
 }
 </script>
 
 <template>
-    <div class="w-96 border-[1px] border-solid rounded-3xl h-[48rem]">
+    <div class="w-96 border-[1px] rounded-3xl h-[48rem] relative shadow-2xl">
         <div class="bg-[#E5EAED] rounded-t-3xl h-2/5 flex flex-col px-6 pt-8 pb-6">
             <div class="flex justify-end mb-4">
-                <button class="p-2 rounded-lg hover:bg-[#d7dcdf]">
+                <button class="p-2 rounded-lg hover:bg-[#d7dcdf]" @click="showHistoryModal">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.25"
                         stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -181,28 +187,48 @@ export default {
             <CalculatorButton class="bg-[#FDAD10] hover:bg-[#e39b0c] text-white" id="equals" @on-click="handleButtonClicked"
                 :value="`=`">=</CalculatorButton>
         </div>
+
+        <!-- History modal -->
+        <template v-if="showHistory">
+            <div class="calculator-mask absolute w-full h-full bg-gray-400 bottom-0 left-0 opacity-50 z-10 rounded-2xl"
+                @click="closeHistoryModal"></div>
+
+            <div class="absolute w-full h-3/5 bg-white bottom-0 left-0 z-20 rounded-2xl px-6 py-8">
+                <div class="flex flex-col h-full gap-2">
+                    <div class="flex flex-col flex-grow gap-2 overflow-auto history-container">
+                        <HistoryItem :expression="''" :result="''" @on-click=""></HistoryItem>
+                    </div>
+
+                    <button class="px-4 py-2 bg-[#E5EAED] hover:bg-[#d7dcdf] font-semibold rounded-lg" @click="handleClearHistory">Clear history</button>
+                </div>
+            </div>
+        </template>
     </div>
 </template>
 
 <style scoped>
 /* width */
-.calculator-screen::-webkit-scrollbar {
+.calculator-screen::-webkit-scrollbar,
+.history-container::-webkit-scrollbar {
     width: 6px;
 }
 
 /* Track */
-.calculator-screen::-webkit-scrollbar-track {
+.calculator-screen::-webkit-scrollbar-track,
+.history-container::-webkit-scrollbar-track {
     background: #e5eaed;
     border-radius: 8px;
 }
 
 /* Handle */
-.calculator-screen::-webkit-scrollbar-thumb {
+.calculator-screen::-webkit-scrollbar-thumb,
+.history-container::-webkit-scrollbar-thumb {
     background: #bbbbbb;
     border-radius: 8px;
 }
 
-.calculator-screen::-webkit-scrollbar-thumb:hover {
+.calculator-screen::-webkit-scrollbar-thumb:hover,
+.history-container::-webkit-scrollbar-thumb:hover {
     background: #aaaaaa;
 }
 </style>
