@@ -8,7 +8,8 @@ const calculatorStore = {
             calculatedExpression: "",
             result: "",
             showHistory: false,
-        }
+            expressionHistory: [],
+        };
     },
     mutations: {
         closeHistoryModal(state) {
@@ -18,7 +19,7 @@ const calculatorStore = {
             state.showHistory = true;
         },
         handleClear(state) {
-            state.expression = ""
+            state.expression = "";
             state.result = "";
             state.calculatedExpression = "";
         },
@@ -43,9 +44,17 @@ const calculatorStore = {
                 ? state.expression.slice(0, state.expression.length - 1).concat(operator)
                 : state.expression.concat(operator);
         },
+        updateExpressionFromHistory(state, { expression, result }) {
+            state.result = result;
+            state.calculatedExpression = expression;
+            state.expression = "";
+
+            // close history modal
+            state.showHistory = false;
+        },
     },
     actions: {
-        async handleSubmit({ commit, state }) {
+        async handleSubmit({ state }) {
             if (!state.expression) {
                 return;
             }
@@ -58,7 +67,7 @@ const calculatorStore = {
                 state.calculatedExpression = res.data.expression;
                 state.result = res.data.result;
                 state.expression = "";
-                return
+                return;
             }
 
             if (res.code === 400) {
@@ -69,25 +78,59 @@ const calculatorStore = {
             if (res.code === 401) {
                 // TODO: handle later
             }
+        },
+        async fetchHistory({ state }) {
+            const query = { limit: 50, page: 1 };
+            const res = await HttpService.get(`/v1/expressions/history?limit=${query.limit}&page=${query.page}`);
+
+            if (res.code === 200) {
+                // TODO: handle pagination later
+                const { items } = res.data;
+
+                state.expressionHistory = items;
+                return;
+            }
+
+            if (res.code === 401) {
+                // TODO: handle later
+            }
+        },
+        async clearHistory({ state }) {
+            if (state.expressionHistory.length === 0) {
+                return;
+            }
+
+            const res = await HttpService.delete("/v1/expressions/history/all");
+            if (res.code === 204) {
+                state.expressionHistory = [];
+                return;
+            }
+
+            if (res.code === 401) {
+                // TODO: handle later
+            }
         }
     },
     getters: {
         expression(state) {
-            return state.expression
+            return state.expression;
         },
         calculatedExpression(state) {
-            return state.calculatedExpression
+            return state.calculatedExpression;
         },
         result(state) {
-            return state.result
+            return state.result;
         },
         showHistory(state) {
-            return state.showHistory
+            return state.showHistory;
         },
         lastKey(state) {
-            return state.expression[state.expression.length - 1]
-        }
-    }
+            return state.expression[state.expression.length - 1];
+        },
+        expressionHistory(state) {
+            return state.expressionHistory;
+        },
+    },
 };
 
 export default calculatorStore;

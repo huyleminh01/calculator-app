@@ -1,6 +1,6 @@
 <script setup>
 import CalculatorButton from "./CalculatorButton.vue";
-import HistoryItem from "./HistoryItem.vue";
+import History from "./History.vue";
 </script>
 
 <script>
@@ -25,13 +25,13 @@ const buttonList = [
     { value: "" },
 ]
 export default {
-    components: { CalculatorButton, HistoryItem },
+    components: { CalculatorButton, History },
     computed: mapGetters({
         expression: "calculator/expression",
         calculatedExpression: "calculator/calculatedExpression",
         result: "calculator/result",
         showHistory: "calculator/showHistory",
-        lastKey: "calculator/lastKey"
+        lastKey: "calculator/lastKey",
     }),
     created() {
         // register keyboard event
@@ -152,14 +152,7 @@ export default {
                 @click="$store.commit('calculator/closeHistoryModal')"></div>
 
             <div class="absolute w-full h-3/5 bg-white bottom-0 left-0 z-20 rounded-2xl px-6 py-8">
-                <div class="flex flex-col h-full gap-2">
-                    <div class="flex flex-col flex-grow gap-2 overflow-auto history-container">
-                        <HistoryItem :expression="''" :result="''" @on-click=""></HistoryItem>
-                    </div>
-
-                    <button class="px-4 py-2 bg-[#E5EAED] hover:bg-[#d7dcdf] font-semibold rounded-lg"
-                        @click="handleClearHistory">Clear history</button>
-                </div>
+                <History />
             </div>
         </template>
     </div>
