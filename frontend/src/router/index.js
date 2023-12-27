@@ -1,7 +1,7 @@
+import LoginPage from "@/pages/LoginPage.vue";
+import NotFoundPage from "@/pages/errors/NotFoundPage.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "../pages/HomePage.vue";
-import NotFoundPage from "@/pages/errors/NotFoundPage.vue";
-import LoginPage from "@/pages/LoginPage.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,10 +14,6 @@ const router = createRouter({
         {
             path: "/",
             name: "home",
-            beforeEnter: (to, from, next) => {
-                // get state from store
-                next({ name: "Login" });
-            },
             component: HomePage,
         },
         {
