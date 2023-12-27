@@ -21,6 +21,7 @@ export function errorHandler(error, request, response, next) {
         case "BaseException":
         case "NotFoundException":
         case "UnauthorizedException":
+        case "BadRequestException":
             status = error.status;
 
             responseError.code = error.code;
