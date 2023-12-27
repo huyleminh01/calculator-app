@@ -4,6 +4,8 @@ import HistoryItem from "./HistoryItem.vue";
 </script>
 
 <script>
+import { mapGetters } from "vuex";
+
 const buttonList = [
     { value: "/", type: "operator" },
     { value: "7", type: "operand" },
@@ -23,23 +25,14 @@ const buttonList = [
     { value: "" },
 ]
 export default {
-    components: {
-        CalculatorButton,
-        HistoryItem,
-    },
-    data() {
-        return {
-            expression: "",
-            calculatedExpression: "",
-            result: "",
-            showHistory: false,
-        }
-    },
-    computed: {
-        lastKey() {
-            return this.expression[this.expression.length - 1]
-        }
-    },
+    components: { CalculatorButton, HistoryItem },
+    computed: mapGetters({
+        expression: "calculator/expression",
+        calculatedExpression: "calculator/calculatedExpression",
+        result: "calculator/result",
+        showHistory: "calculator/showHistory",
+        lastKey: "calculator/lastKey"
+    }),
     created() {
         // register keyboard event
         window.addEventListener("keyup", this.handleKeyboard)
@@ -48,14 +41,6 @@ export default {
         window.removeEventListener("keyup", this.handleKeyboard)
     },
     methods: {
-        handleClear() {
-            this.expression = ""
-            this.result = "";
-            this.calculatedExpression = "";
-        },
-        handleBackSpace() {
-            this.expression = this.expression.slice(0, this.expression.length - 1);
-        },
         handleKeyboard(event) {
             if (event.key === "Backspace") {
                 this.handleButtonClicked("delete");
@@ -77,12 +62,13 @@ export default {
         handleButtonClicked(value) {
             switch (value) {
                 case "=":
-                    this.handleSubmit();
+                    this.$store.dispatch("calculator/handleSubmit");
                     break;
                 case "clear":
-                    this.handleClear();
+                    this.$store.commit("calculator/handleClear");
+                    break;
                 case "delete":
-                    this.handleBackSpace();
+                    this.$store.commit("calculator/handleBackSpace");
                     break;
                 case "0":
                 case "1":
@@ -94,46 +80,18 @@ export default {
                 case "7":
                 case "8":
                 case "9":
-                    if (this.result) {
-                        this.result = "";
-                        this.calculatedExpression = "";
-                    }
-                    this.expression += value;
+                    this.$store.commit("calculator/handleTypeNumber", value);
                     break;
                 case "+":
                 case "-":
                 case "*":
                 case "/":
-                    if (this.result) {
-                        this.expression = this.result;
-                        this.result = "";
-                        this.calculatedExpression = "";
-                    }
-
-                    this.expression = /[\+\-\*\/]/.test(this.lastKey)
-                        ? this.expression.slice(0, this.expression.length - 1).concat(value)
-                        : this.expression.concat(value);
+                    this.$store.commit("calculator/handleTypeOperator", value);
                     break;
                 default:
                     break;
             }
         },
-        handleSubmit: async function () {
-            if (!this.expression) {
-                return;
-            }
-
-            this.calculatedExpression = this.expression;
-            this.result = eval(this.expression).toString();
-            this.expression = "";
-        },
-
-        closeHistoryModal() {
-            this.showHistory = false;
-        },
-        showHistoryModal() {
-            this.showHistory = true;
-        }
     }
 }
 </script>
@@ -142,7 +100,7 @@ export default {
     <div class="w-96 border-[1px] rounded-3xl h-[48rem] relative shadow-2xl">
         <div class="bg-[#E5EAED] rounded-t-3xl h-2/5 flex flex-col px-6 pt-8 pb-6">
             <div class="flex justify-end mb-4">
-                <button class="p-2 rounded-lg hover:bg-[#d7dcdf]" @click="showHistoryModal">
+                <button class="p-2 rounded-lg hover:bg-[#d7dcdf]" @click="$store.commit('calculator/showHistoryModal')">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.25"
                         stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -191,7 +149,7 @@ export default {
         <!-- History modal -->
         <template v-if="showHistory">
             <div class="calculator-mask absolute w-full h-full bg-gray-400 bottom-0 left-0 opacity-50 z-10 rounded-2xl"
-                @click="closeHistoryModal"></div>
+                @click="$store.commit('calculator/closeHistoryModal')"></div>
 
             <div class="absolute w-full h-3/5 bg-white bottom-0 left-0 z-20 rounded-2xl px-6 py-8">
                 <div class="flex flex-col h-full gap-2">
